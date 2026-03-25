@@ -251,6 +251,24 @@ enum BridgeStatus {
   FAILED
 }
 
+model MintedToken {
+  id              String   @id @default(cuid())
+  contractId      String   @map("contract_id")
+  transactionHash String   @unique @map("transaction_hash")
+  projectId       String?  @map("project_id")
+  recipient       String
+  amount          BigInt
+  admin           String?
+  ledgerSeq       Int      @map("ledger_seq")
+  mintedAt        DateTime @map("minted_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([contractId])
+  @@index([recipient])
+  @@index([projectId])
+  @@map("minted_tokens")
+}
+
 model YieldEvent {
   id        String   @id @default(cuid())
   escrowId  String   @map("escrow_id")
