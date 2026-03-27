@@ -35,8 +35,8 @@ fn test_order_book_structure() {
     
     let order_book = OrderBook {
         pool_id: 1,
-        bids: Vec::new(),
-        asks: Vec::new(),
+        bids: Vec::new(&env),
+        asks: Vec::new(&env),
     };
     
     assert_eq!(order_book.pool_id, 1);
