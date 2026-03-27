@@ -1,7 +1,9 @@
 #![cfg(test)]
 
-use crate::{OrderBook, OrderType, OrderStatus};
 use soroban_sdk::{Env, Vec};
+
+// Import limit order types
+use crate::lib::{OrderBook, OrderType, OrderStatus};
 
 #[test]
 fn test_order_book_structure() {
