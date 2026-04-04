@@ -22,10 +22,24 @@ export class GqlThrottlerGuard extends ThrottlerGuard {
   }
 
   // Resolvers with @Throttle({ aggregate }) get both tiers; others only get 'default'
-  protected async getThrottlers(context: ExecutionContext): Promise<ThrottlerOptions[]> {
-    const all = await super.getThrottlers(context);
-    const hasExplicit = Reflect.getMetadata('THROTTLER:THROTTLERS', context.getHandler());
-    return hasExplicit ? all : all.filter((t) => t.name === 'default');
+  protected async handleRequest(requestProps: any): Promise<boolean> {
+    const { context, throttler } = requestProps;
+
+    if (throttler.name !== 'default') {
+      const handler = context.getHandler();
+      const classRef = context.getClass();
+      
+      // Look for explicit @Throttle() configuration for this specific throttler
+      const hasLimit = this.reflector.getAllAndOverride(`THROTTLER:LIMIT${throttler.name}`, [handler, classRef]);
+      const hasTtl = this.reflector.getAllAndOverride(`THROTTLER:TTL${throttler.name}`, [handler, classRef]);
+
+      // If no explicit configuration is found for this non-default tier, skip it
+      if (!hasLimit && !hasTtl) {
+        return true;
+      }
+    }
+
+    return super.handleRequest(requestProps);
   }
 
   protected throwThrottlingException(): never {

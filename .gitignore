@@ -41,8 +41,7 @@ coverage/
 
 # Build artifacts
 *.wasm
-*.so
-*.dylib
+*.so.dylib
 *.dll
 
 # Temporary files
